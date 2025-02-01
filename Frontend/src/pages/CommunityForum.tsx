@@ -23,7 +23,7 @@ interface Post {
 }
 
 const CommunityForum = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPost, setNewPost] = useState({ title: '', content: '' });
@@ -40,7 +40,6 @@ const CommunityForum = () => {
           return {
             id: doc.id,
             title: data.title,
-            content: data.content,
             author: data.author,
             timestamp: data.timestamp,
             replies: data.replies || 0,
@@ -56,10 +55,10 @@ const CommunityForum = () => {
   }, []);
 
   // Handle new post submission
-  const handleCreatePost = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreatePost = async (e) => {
     e.preventDefault();
     try {
-      const newPostData = {
+      const newPostData: NewPostData = {
         title: newPost.title,
         content: newPost.content,
         author: 'Anonymous',
