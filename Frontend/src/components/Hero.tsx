@@ -1,8 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate from react-router-dom
 
 const Hero = () => {
+  const navigate = useNavigate();  // Initialize useNavigate
+
+  // Function to handle navigation
+  const handleGetStartedClick = () => {
+    navigate('/dashboard');  // Navigate to the Dashboard page
+  };
+
   return (
     <div className="relative min-h-screen flex items-center">
       <div
@@ -15,7 +23,7 @@ const Hero = () => {
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
       </div>
-      
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -32,9 +40,10 @@ const Hero = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={handleGetStartedClick}  // Add click handler
             className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold flex items-center mx-auto hover:bg-green-700 transition-colors"
           >
-           <a href="#features">Get Started</a> 
+            Get Started
             <ArrowRight className="ml-2 h-5 w-5" />
           </motion.button>
         </motion.div>
