@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Mic, MessageSquare, Play } from 'lucide-react';
 import FeatureLayout from '../components/shared/FeatureLayout';
 import HowItWorks from '../components/shared/HowItWorks';

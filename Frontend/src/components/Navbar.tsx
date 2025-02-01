@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sprout } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -13,6 +15,10 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleAuthClick = () => {
+    navigate("/sign-in")
+  }
 
   return (
     <motion.nav
@@ -34,7 +40,7 @@ const Navbar = () => {
             <a href="#features" className="text-gray-700 hover:text-green-600 transition-colors">Features</a>
             <a href="#about" className="text-gray-700 hover:text-green-600 transition-colors">About Us</a>
             <a href="#contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</a>
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+            <button onClick = {handleAuthClick} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
               Login / Sign Up
             </button>
           </div>

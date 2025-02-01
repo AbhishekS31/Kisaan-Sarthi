@@ -15,11 +15,16 @@ import WeatherUpdates from "./pages/WeatherUpdates";
 import MarketPrices from "./pages/MarketPrices";
 import VoiceSupport from "./pages/VoiceSupport";
 import FertilizerRecommendation from "./pages/FertilizerRecommendation";
+import SignInPage from "./components/SignIn";
+import SignUpPage from "./components/Signup";
+import ProtectedRoute from "./Protected";
 
 function App() {
   return (
     <Router>
       <Routes>
+      {/* <Route path="/sign-in/*" element={<SignIn routing="path" path="/sign-in" />} />
+      <Route path="/sign-up/*" element={<SignUp routing="path" path="/sign-up" />} /> */}
         {/* Home Route */}
         <Route
           path="/"
@@ -39,7 +44,10 @@ function App() {
           }
         />
         
+        <Route path='/sign-in' element={<SignInPage/>} />
+        <Route path='/sign-up' element={<SignUpPage/>} />
         {/* Feature Routes */}
+        <Route element={<ProtectedRoute/>}> 
         <Route path="/features" element={<Features />} />
         <Route path="/features/plant-disease" element={<PlantDisease />} />
         <Route path="/features/crop-planning" element={<CropPlanning />} />
@@ -48,6 +56,7 @@ function App() {
         <Route path="/features/market-prediction" element={<MarketPrices />} />
         <Route path="/features/fertilizer-recommendation" element={<FertilizerRecommendation />} />
         <Route path="/features/voice-chat" element={<VoiceSupport />} />
+        </Route>
       </Routes>
     </Router>
   );

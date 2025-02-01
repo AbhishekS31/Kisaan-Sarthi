@@ -64,7 +64,15 @@ const features = [
   },
 ];
 
-const FeatureCard = ({ icon: Icon, title, description, index, route }) => {
+interface FeatureCardProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  index: number;
+  route: string;
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, description, index, route }) => {
   const navigate = useNavigate();
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
