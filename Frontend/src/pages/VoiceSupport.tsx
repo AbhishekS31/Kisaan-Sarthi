@@ -103,14 +103,28 @@ const AudioRecorder: React.FC = () => {
   }
 
   const speakResponse = () => {
-    if (serverResponse && "speechSynthesis" in window) {
-      setIsPlaying(true)
-      const utterance = new SpeechSynthesisUtterance(serverResponse)
-      utterance.onend = () => setIsPlaying(false)
-      speechSynthesisRef.current = utterance
-      window.speechSynthesis.speak(utterance)
+    if (serverResponse && 'speechSynthesis' in window) {
+      setIsPlaying(true);
+      const utterance = new SpeechSynthesisUtterance(serverResponse);
+      const voices = window.speechSynthesis.getVoices();
+
+      const hindiVoice = voices.find(voice => voice.lang === 'hi-IN');
+      if (hindiVoice) {
+        utterance.voice = hindiVoice;
+      } else {
+        console.warn('Hindi voice not available, using default voice.');
+      }
+      const marathiVoice = voices.find(voice => voice.lang === 'mr-IN');
+      if (marathiVoice) {
+        utterance.voice = marathiVoice;
+      } else {
+        console.warn('Marathi voice not available, using default voice.');
+      }
+      utterance.onend = () => setIsPlaying(false);
+      speechSynthesisRef.current = utterance;
+      window.speechSynthesis.speak(utterance);
     }
-  }
+  };
 
   const stopSpeaking = () => {
     if (speechSynthesisRef.current) {
