@@ -1,69 +1,76 @@
-import  { useState } from 'react';
-import { useReactMediaRecorder } from 'react-media-recorder';
-import axios from 'axios';
+import  { useState, useRef } from 'react';
 
 const AudioRecorder = () => {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const {
-    status,
-    startRecording,
-    stopRecording,
-    mediaBlobUrl,
-    clearBlobUrl,
-  } = useReactMediaRecorder({ audio: true });
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
-  const handleStopRecording = async () => {
-    setIsProcessing(true);
-    stopRecording();
+  const startRecording = () => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        mediaRecorderRef.current = new MediaRecorder(stream);
+        mediaRecorderRef.current.ondataavailable = (event) => {
+          audioChunksRef.current.push(event.data);
+        };
+        mediaRecorderRef.current.onstop = () => {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          setAudioUrl(audioUrl);
+          audioChunksRef.current = [];
+        };
+        mediaRecorderRef.current.start();
+        setIsRecording(true);
+      })
+      .catch((err) => {
+        console.error('Error accessing microphone:', err);
+      });
+  };
 
-    // Wait for the recording to finalize
-    setTimeout(async () => {
-      if (!mediaBlobUrl) {
-        alert('No recording available');
-        setIsProcessing(false);
-        return;
-      }
-      const blob = await fetch(mediaBlobUrl).then((r) => r.blob());
-      const formData = new FormData();
-      formData.append('file', blob, 'recording.wav');
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
+  };
 
-      try {
-        // Replace 'YOUR_BACKEND_ENDPOINT' with your actual backend URL
-        await axios.post('http://172.16.44.59:5000', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+  const sendAudioToBackend = () => {
+    if (!audioUrl) return;
+
+    const formData = new FormData();
+    fetch(audioUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        formData.append('audio', blob, 'recording.wav');
+        return fetch('http://172.16.44.59:5000/upload_audio', {
+          method: 'POST',
+          body: formData,
         });
-        alert('File uploaded successfully');
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        alert('Failed to upload file');
-      } finally {
-        setIsProcessing(false);
-        clearBlobUrl();
-      }
-    }, 1000); // Adjust timeout as needed to ensure the blob is available
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Server response:', data);
+      })
+      .catch((error) => {
+        console.error('Error sending audio to backend:', error);
+      });
+
+  
   };
 
   return (
-    <div className="text-center">
-      <p>{status}</p>
-      <button
-        onClick={startRecording}
-        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-      >
-        Start Recording
+    <div>
+      <button onClick={isRecording ? stopRecording : startRecording}>
+        {isRecording ? 'Stop Recording' : 'Start Recording'}
       </button>
-      <button
-        onClick={handleStopRecording}
-        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors ml-4"
-        disabled={isProcessing}
-      >
-        Stop Recording
-      </button>
-      {mediaBlobUrl && (
-        <div className="mt-4">
-          <audio src={mediaBlobUrl} controls />
+      {audioUrl && (
+        <div>
+          <audio controls>
+            <source src={audioUrl} type="audio/wav" />
+            Your browser does not support the audio element.
+          </audio>
+          <button onClick={sendAudioToBackend}>Send to Backend</button>
         </div>
       )}
     </div>

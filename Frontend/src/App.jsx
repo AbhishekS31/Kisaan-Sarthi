@@ -12,7 +12,7 @@ import CropPlanning from "./pages/CropPlanning";
 import GovernmentSchemes from "./pages/GovernmentSchemes";
 import WeatherUpdates from "./pages/WeatherUpdates";
 import MarketPrices from "./pages/MarketPrices";
-import VoiceSupport from "./pages/VoiceSupport";
+import VoiceSupport from "./pages/VoiceSupport.tsx";
 import FertilizerRecommendation from "./pages/FertilizerRecommendation";
 import SignInPage from "./components/SignIn";
 import SignUpPage from "./components/Signup";
