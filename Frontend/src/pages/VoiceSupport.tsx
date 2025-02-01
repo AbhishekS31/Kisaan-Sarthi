@@ -118,7 +118,7 @@ const AudioRecorder: React.FC = () => {
       utterance.onend = () => setIsPlaying(false);
       speechSynthesisRef.current = utterance;
       window.speechSynthesis.speak(utterance);
-    }set
+    }
   };
 
   const stopSpeaking = () => {

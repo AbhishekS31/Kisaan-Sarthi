@@ -5,6 +5,7 @@ import FeatureLayout from '../components/shared/FeatureLayout';
 import HowItWorks from '../components/shared/HowItWorks';
 import CallToAction from '../components/shared/CallToAction';
 import { motion } from 'framer-motion';
+// import ReactJson from 'react-json-view';
 
 const steps = [
   {
@@ -53,6 +54,7 @@ const PlantDisease = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log(response)
       setAnalysisResult(response.data);
     } catch (error) {
       console.error('Error uploading the file:', error);
@@ -136,8 +138,14 @@ const PlantDisease = () => {
             {analysisResult && (
               <div className="mt-6 text-center">
                 <h4 className="text-xl font-semibold mb-4">Analysis Result:</h4>
-                {/* Display the analysis result here */}
-                <p>{analysisResult}</p>
+                <div className="text-left">
+                  <h5 className="text-lg font-semibold">Disease Name:</h5>
+                  <p>{analysisResult[0]}</p>
+                  <h5 className="text-lg font-semibold mt-4">Description:</h5>
+                  <p>{analysisResult[1]}</p>
+                  <h5 className="text-lg font-semibold mt-4">Solution:</h5>
+                  <p>{analysisResult[2]}</p>
+                </div>
               </div>
             )}
           </motion.div>
