@@ -1,5 +1,4 @@
 
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "./components/Navbar";
@@ -15,6 +14,7 @@ import WeatherUpdates from "./pages/WeatherUpdates";
 import MarketPrices from "./pages/MarketPrices";
 import VoiceSupport from "./pages/VoiceSupport";
 import FertilizerRecommendation from "./pages/FertilizerRecommendation";
+import CommunityForum from "./pages/CommunityForum";
 
 function App() {
   return (
@@ -48,6 +48,7 @@ function App() {
         <Route path="/features/market-prediction" element={<MarketPrices />} />
         <Route path="/features/fertilizer-recommendation" element={<FertilizerRecommendation />} />
         <Route path="/features/voice-chat" element={<VoiceSupport />} />
+        <Route path="/features/community" element={<CommunityForum />} />
       </Routes>
     </Router>
   );
