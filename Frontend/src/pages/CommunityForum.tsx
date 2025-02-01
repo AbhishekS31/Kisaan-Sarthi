@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { db, collection, getDocs, query, orderBy, addDoc } from "../firebase";
 import { motion } from 'framer-motion';
-import { Users, MessageSquare, ThumbsUp } from 'lucide-react';
+import { Users, MessageSquare, ThumbsUp, X } from 'lucide-react';
 import FeatureLayout from '../components/shared/FeatureLayout';
 import HowItWorks from '../components/shared/HowItWorks';
 import CallToAction from '../components/shared/CallToAction';
@@ -12,11 +12,22 @@ const steps = [
   { icon: <ThumbsUp className="h-8 w-8 text-green-600" />, title: 'Get Answers', description: 'Receive expert solutions' },
 ];
 
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  author: string;
+  timestamp: any;
+  replies: number;
+  likes: number;
+}
+
 const CommunityForum = () => {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPost, setNewPost] = useState({ title: '', content: '' });
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   // Fetch posts from Firestore
   useEffect(() => {
@@ -29,6 +40,7 @@ const CommunityForum = () => {
           return {
             id: doc.id,
             title: data.title,
+            content: data.content,
             author: data.author,
             timestamp: data.timestamp,
             replies: data.replies || 0,
@@ -44,7 +56,7 @@ const CommunityForum = () => {
   }, []);
 
   // Handle new post submission
-  const handleCreatePost = async (e) => {
+  const handleCreatePost = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const newPostData = {
@@ -60,6 +72,10 @@ const CommunityForum = () => {
       console.error("Error creating post:", error);
     }
   };
+
+  // Handle opening and closing discussion popup
+  const handleOpenPost = (post: Post) => setSelectedPost(post);
+  const handleClosePost = () => setSelectedPost(null);
 
   return (
     <FeatureLayout
@@ -96,11 +112,12 @@ const CommunityForum = () => {
           <div className="space-y-4">
             {posts.filter(post => post.title.toLowerCase().includes(searchQuery.toLowerCase())).map((post, index) => (
               <motion.div
-                key={index}
+                key={post.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                onClick={() => handleOpenPost(post)}
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -130,6 +147,7 @@ const CommunityForum = () => {
         onClick={() => {}}
       />
 
+      {/* Modal for New Post */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
@@ -154,6 +172,17 @@ const CommunityForum = () => {
                 <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Create Post</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Viewing a Post */}
+      {selectedPost && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+            <h2 className="text-2xl font-semibold">{selectedPost.title}</h2>
+            <p className="text-gray-600">{selectedPost.content}</p>
+            <button onClick={handleClosePost} className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Close</button>
           </div>
         </div>
       )}
