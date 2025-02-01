@@ -3,18 +3,18 @@ import { useInView } from 'react-intersection-observer';
 
 const testimonials = [
   {
-    name: 'Rajesh Kumar',
-    location: 'Punjab',
+    name: 'Abhishek Singh',
+    location: 'Rajasthan',
     quote: 'KisanSarthi has revolutionized how I manage my farm. The AI recommendations are incredibly accurate!'
   },
   {
-    name: 'Priya Patel',
-    location: 'Gujarat',
+    name: 'Siddesh Pansare',
+    location: 'Maharashtra',
     quote: 'The disease detection feature saved my crop this season. This app is a game-changer for farmers.'
   },
   {
-    name: 'Mohammed Ali',
-    location: 'Maharashtra',
+    name: 'Sumit Singh',
+    location: 'Bihar',
     quote: 'The weather alerts and market predictions help me make better decisions for my farm.'
   }
 ];
