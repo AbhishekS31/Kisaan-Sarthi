@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 import { Upload, Scan, Leaf } from 'lucide-react';
 import FeatureLayout from '../components/shared/FeatureLayout';
 import HowItWorks from '../components/shared/HowItWorks';
@@ -25,21 +26,39 @@ const steps = [
 
 const PlantDisease = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files[0]) {
+      const file = files[0];
       setSelectedFile(file);
-      simulateAnalysis();
+      const preview = URL.createObjectURL(file);
+      setPreviewUrl(preview);
     }
   };
 
-  const simulateAnalysis = () => {
-    setIsAnalyzing(true);
-    setTimeout(() => {
+  const handleUploadClick = async () => {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append('image', selectedFile);
+
+    try {
+      setIsAnalyzing(true);
+      const response = await axios.post('http://172.16.44.59:5000/identify_disease', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setAnalysisResult(response.data);
+    } catch (error) {
+      console.error('Error uploading the file:', error);
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
   };
 
   return (
@@ -60,19 +79,16 @@ const PlantDisease = () => {
             className="bg-white p-8 rounded-xl shadow-lg"
           >
             <h3 className="text-2xl font-semibold mb-6 text-center">Try It Now</h3>
-            
+
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleFileUpload}
+                onChange={handleFileChange}
                 className="hidden"
                 id="image-upload"
               />
-              <label
-                htmlFor="image-upload"
-                className="cursor-pointer inline-block"
-              >
+              <label htmlFor="image-upload" className="cursor-pointer inline-block">
                 <div className="mb-4">
                   <Upload className="h-12 w-12 text-gray-400 mx-auto" />
                 </div>
@@ -85,6 +101,27 @@ const PlantDisease = () => {
               </label>
             </div>
 
+            {previewUrl && (
+              <div className="mt-6 text-center">
+                <img
+                  src={previewUrl}
+                  alt="Selected Preview"
+                  className="mx-auto h-48 w-48 object-cover rounded-md"
+                />
+              </div>
+            )}
+
+            {selectedFile && (
+              <div className="mt-6 text-center">
+                <button
+                  onClick={handleUploadClick}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md"
+                >
+                  Analyze Image
+                </button>
+              </div>
+            )}
+
             {isAnalyzing && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -94,6 +131,14 @@ const PlantDisease = () => {
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600 mx-auto mb-4"></div>
                 <p className="text-gray-600">Analyzing your image...</p>
               </motion.div>
+            )}
+
+            {analysisResult && (
+              <div className="mt-6 text-center">
+                <h4 className="text-xl font-semibold mb-4">Analysis Result:</h4>
+                {/* Display the analysis result here */}
+                <p>{analysisResult}</p>
+              </div>
             )}
           </motion.div>
         </div>

@@ -32,7 +32,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Sprout className="h-8 w-8 text-green-600" />
-            <span className="ml-2 text-xl font-bold text-green-800">KisanSarthi</span>
+            <span className="ml-2 text-xl font-bold text-green-800">Kisaan Sarthi</span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">

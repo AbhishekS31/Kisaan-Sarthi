@@ -16,7 +16,7 @@ function SignInPage() {
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
-      <h2 className="text-2xl font-semibold mb-4">Sign In  </h2>
+      {/* <h2 className="text-2xl font-semibold mb-4">Sign In  </h2> */}
       <SignIn appearance={appearance}  />
       <RedirectToSignUp />
     </div>

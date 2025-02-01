@@ -13,7 +13,16 @@ const steps = [
 ];
 
 const CommunityForum = () => {
-  const [posts, setPosts] = useState([]);
+  interface Post {
+    id: string;
+    title: string;
+    author: string;
+    timestamp: any;
+    replies: number;
+    likes: number;
+  }
+  
+  const [posts, setPosts] = useState<Post[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPost, setNewPost] = useState({ title: '', content: '' });
@@ -29,6 +38,7 @@ const CommunityForum = () => {
           return {
             id: doc.id,
             title: data.title,
+            content : data.content ,
             author: data.author,
             timestamp: data.timestamp,
             replies: data.replies || 0,
@@ -44,10 +54,17 @@ const CommunityForum = () => {
   }, []);
 
   // Handle new post submission
-  const handleCreatePost = async (e) => {
+  interface NewPostData {
+    title: string;
+    content: string;
+    author: string;
+    timestamp: Date;
+  }
+
+  const handleCreatePost = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const newPostData = {
+      const newPostData: NewPostData = {
         title: newPost.title,
         content: newPost.content,
         author: 'Anonymous',

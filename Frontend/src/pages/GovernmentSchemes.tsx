@@ -1,88 +1,140 @@
-import React, { useState } from 'react';
-import { FileText, Search, CheckCircle } from 'lucide-react';
-import FeatureLayout from '../components/shared/FeatureLayout';
-import HowItWorks from '../components/shared/HowItWorks';
-import CallToAction from '../components/shared/CallToAction';
-import { motion } from 'framer-motion';
+"use client"
+
+import type React from "react"
+import { useState } from "react"
+import { FileText, Search, CheckCircle, Loader2 } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 const steps = [
   {
     icon: <FileText className="h-8 w-8 text-green-600" />,
-    title: 'Enter Details',
-    description: 'Provide your farm and location information',
+    title: "Enter Details",
+    description: "Provide your farm and location information",
   },
   {
     icon: <Search className="h-8 w-8 text-green-600" />,
-    title: 'AI Analysis',
-    description: 'AI matches you with eligible schemes',
+    title: "AI Analysis",
+    description: "AI matches you with eligible schemes",
   },
   {
     icon: <CheckCircle className="h-8 w-8 text-green-600" />,
-    title: 'Apply Now',
-    description: 'Apply directly through our platform',
+    title: "Apply Now",
+    description: "Apply directly through our platform",
   },
-];
+]
 
 const states = [
-  'Andhra Pradesh', 'Bihar', 'Gujarat', 'Haryana', 'Karnataka',
-  'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Punjab', 'Rajasthan',
-  'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal'
-];
+  "Andhra Pradesh",
+  "Bihar",
+  "Gujarat",
+  "Haryana",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Punjab",
+  "Rajasthan",
+  "Tamil Nadu",
+  "Telangana",
+  "Uttar Pradesh",
+  "West Bengal",
+]
 
-const farmTypes = [
-  'Small (< 2 hectares)',
-  'Medium (2-5 hectares)',
-  'Large (> 5 hectares)'
-];
+const farmTypes = ["Small (< 2 hectares)", "Medium (2-5 hectares)", "Large (> 5 hectares)"]
 
 const GovernmentSchemes = () => {
-  const [state, setState] = useState('');
-  const [farmType, setFarmType] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
+  const [state, setState] = useState("")
+  const [farmType, setFarmType] = useState("")
+  const [age, setAge] = useState("")
+  const [crop, setCrop] = useState("")
+  const [landSize, setLandSize] = useState("")
+  const [ownershipStatus, setOwnershipStatus] = useState("")
+  const [income, setIncome] = useState("")
+  const [financialNeeds, setFinancialNeeds] = useState("")
+  const [challenges, setChallenges] = useState("")
+  const [isSearching, setIsSearching] = useState(false)
+  const [schemes, setSchemes] = useState([])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (state && farmType) {
-      setIsSearching(true);
-      setTimeout(() => {
-        setIsSearching(false);
-      }, 2000);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const profileData = {
+      age,
+      typeOfFarming: farmType,
+      crop,
+      landSize,
+      ownershipStatus,
+      income,
+      currentFinancialNeeds: financialNeeds,
+      challengesFaced: challenges,
     }
-  };
+
+    if (state && farmType) {
+      setIsSearching(true)
+      try {
+        const response = await fetch("http://172.16.44.59:5000/get_schemes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            state,
+            profileData,
+          }),
+        })
+        const data = await response.json()
+        console.log("Server Response:", data)
+        setSchemes(data)
+      } catch (error) {
+        console.error("Error:", error)
+      } finally {
+        setIsSearching(false)
+      }
+    }
+  }
 
   return (
-    <FeatureLayout
-      title="Discover Government Schemes for You"
-      description="Find and apply for government schemes tailored to your farming needs"
-      backgroundImage="https://images.unsplash.com/photo-1590682680695-43b964a3ae17?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80"
-    >
-      <HowItWorks steps={steps} />
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 className="text-4xl font-bold text-center text-green-800 mb-4">Discover Government Schemes for You</h1>
+        <p className="text-xl text-center text-gray-600 mb-12">
+          Find and apply for government schemes tailored to your farming needs
+        </p>
 
-      <section className="py-16">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white p-8 rounded-xl shadow-lg"
-          >
-            <h3 className="text-2xl font-semibold mb-6 text-center">
-              Find Eligible Schemes
-            </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {steps.map((step, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="bg-white rounded-lg shadow-lg p-6 text-center"
+            >
+              <div className="flex justify-center mb-4">{step.icon}</div>
+              <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+              <p className="text-gray-600">{step.description}</p>
+            </motion.div>
+          ))}
+        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl mx-auto"
+        >
+          <h2 className="text-3xl font-bold mb-8 text-center text-green-800">Find Eligible Schemes</h2>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="state"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
                   State
                 </label>
                 <select
                   id="state"
                   value={state}
                   onChange={(e) => setState(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
                 >
                   <option value="">Select your state</option>
@@ -95,17 +147,14 @@ const GovernmentSchemes = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="farm-type"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="farm-type" className="block text-sm font-medium text-gray-700 mb-1">
                   Farm Type
                 </label>
                 <select
                   id="farm-type"
                   value={farmType}
                   onChange={(e) => setFarmType(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
                 >
                   <option value="">Select farm type</option>
@@ -117,34 +166,170 @@ const GovernmentSchemes = () => {
                 </select>
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <div>
+                <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">
+                  Age
+                </label>
+                <input
+                  type="number"
+                  id="age"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="crop" className="block text-sm font-medium text-gray-700 mb-1">
+                  Crop
+                </label>
+                <input
+                  type="text"
+                  id="crop"
+                  value={crop}
+                  onChange={(e) => setCrop(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="land-size" className="block text-sm font-medium text-gray-700 mb-1">
+                  Land Size
+                </label>
+                <input
+                  type="text"
+                  id="land-size"
+                  value={landSize}
+                  onChange={(e) => setLandSize(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="ownership-status" className="block text-sm font-medium text-gray-700 mb-1">
+                  Ownership Status
+                </label>
+                <input
+                  type="text"
+                  id="ownership-status"
+                  value={ownershipStatus}
+                  onChange={(e) => setOwnershipStatus(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="income" className="block text-sm font-medium text-gray-700 mb-1">
+                  Income
+                </label>
+                <input
+                  type="text"
+                  id="income"
+                  value={income}
+                  onChange={(e) => setIncome(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="financial-needs" className="block text-sm font-medium text-gray-700 mb-1">
+                  Current Financial Needs
+                </label>
+                <input
+                  type="text"
+                  id="financial-needs"
+                  value={financialNeeds}
+                  onChange={(e) => setFinancialNeeds(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="challenges" className="block text-sm font-medium text-gray-700 mb-1">
+                Challenges Faced
+              </label>
+              <textarea
+                id="challenges"
+                value={challenges}
+                onChange={(e) => setChallenges(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                rows={3}
+                required
+              ></textarea>
+            </div>
+
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <button
                 type="submit"
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 disabled={isSearching}
               >
                 {isSearching ? (
                   <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    <Loader2 className="animate-spin mr-2 h-5 w-5" />
                     Searching Schemes...
                   </div>
                 ) : (
-                  'Find Eligible Schemes'
+                  "Find Eligible Schemes"
                 )}
-              </motion.button>
-            </form>
-          </motion.div>
-        </div>
-      </section>
+              </button>
+            </motion.div>
+          </form>
+        </motion.div>
 
-      <CallToAction
-        title="Ready to access government support?"
-        buttonText="Find My Schemes"
-        onClick={() => {}}
-      />
-    </FeatureLayout>
-  );
-};
+        <AnimatePresence>
+          {schemes.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="mt-16 max-w-4xl mx-auto "
+            >
+              <h3 className="text-3xl font-bold mb-8 text-center text-green-800">Eligible Schemes</h3>
+              <div className="grid gap-6 md:grid-cols-2">
+                {schemes.map((scheme, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-white p-6 rounded-lg  shadow-inner shadow-black"
+                  >
+                    <h4 className="text-xl font-semibold mb-2 text-green-700">{scheme[0]}</h4>
+                    <p className="text-gray-600">{scheme[1]}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
 
-export default GovernmentSchemes;
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-16 text-center"
+        >
+          {/* <h3 className="text-2xl font-bold mb-4 text-green-800">Ready to access government support?</h3> */}
+          {/* <button
+            onClick={() => {}}
+            className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          >
+            Find My Schemes
+          </button> */}
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+export default GovernmentSchemes
+
