@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { db, collection, getDocs, query, orderBy, addDoc } from "../firebase";
+import { db, collection, getDocs, addDoc, query, orderBy } from "../firebase";
+import { where } from "firebase/firestore";
 import { motion } from 'framer-motion';
 import { Users, MessageSquare, ThumbsUp, X } from 'lucide-react';
 import FeatureLayout from '../components/shared/FeatureLayout';
@@ -18,16 +19,24 @@ interface Post {
   content: string;
   author: string;
   timestamp: any;
-  replies: number;
-  likes: number;
+}
+
+interface Reply {
+  id: string;
+  postId: string;
+  content: string;
+  author: string;
+  timestamp: any;
 }
 
 const CommunityForum = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [replies, setReplies] = useState<{ [postId: string]: Reply[] }>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPost, setNewPost] = useState({ title: '', content: '' });
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [newReply, setNewReply] = useState("");
 
   // Fetch posts from Firestore
   useEffect(() => {
@@ -35,18 +44,10 @@ const CommunityForum = () => {
       try {
         const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
         const querySnapshot = await getDocs(q);
-        const postsData = querySnapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.title,
-            content: data.content,
-            author: data.author,
-            timestamp: data.timestamp,
-            replies: data.replies || 0,
-            likes: data.likes || 0,
-          };
-        });
+        const postsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Post[];
         setPosts(postsData);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -54,6 +55,22 @@ const CommunityForum = () => {
     };
     fetchPosts();
   }, []);
+
+  // Fetch replies for a specific post
+  const fetchReplies = async (postId: string) => {
+    try {
+      const q = query(collection(db, 'replies'), where("postId", "==", postId), orderBy("timestamp", "asc"));
+      const querySnapshot = await getDocs(q);
+      const repliesData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Reply[];
+
+      setReplies(prevReplies => ({ ...prevReplies, [postId]: repliesData }));
+    } catch (error) {
+      console.error("Error fetching replies:", error);
+    }
+  };
 
   // Handle new post submission
   const handleCreatePost = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,9 +90,37 @@ const CommunityForum = () => {
     }
   };
 
-  // Handle opening and closing discussion popup
-  const handleOpenPost = (post: Post) => setSelectedPost(post);
-  const handleClosePost = () => setSelectedPost(null);
+  // Handle opening a post and loading replies
+  const handleOpenPost = async (post: Post) => {
+    setSelectedPost(post);
+    await fetchReplies(post.id);
+  };
+
+  // Handle closing a post
+  const handleClosePost = () => {
+    setSelectedPost(null);
+    setNewReply("");
+  };
+
+  // Handle submitting a reply
+  const handleReplySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!selectedPost) return;
+
+    try {
+      const newReplyData = {
+        postId: selectedPost.id,
+        content: newReply,
+        author: "Anonymous",
+        timestamp: new Date(),
+      };
+      await addDoc(collection(db, "replies"), newReplyData);
+      setNewReply("");
+      await fetchReplies(selectedPost.id);
+    } catch (error) {
+      console.error("Error adding reply:", error);
+    }
+  };
 
   return (
     <FeatureLayout
@@ -110,79 +155,54 @@ const CommunityForum = () => {
           </div>
 
           <div className="space-y-4">
-            {posts.filter(post => post.title.toLowerCase().includes(searchQuery.toLowerCase())).map((post, index) => (
+            {posts.filter(post => post.title.toLowerCase().includes(searchQuery.toLowerCase())).map((post) => (
               <motion.div
                 key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
                 className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                 onClick={() => handleOpenPost(post)}
               >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-1">{post.title}</h4>
-                    <p className="text-sm text-gray-600">Posted by {post.author} • {new Date(post.timestamp.seconds * 1000).toLocaleString()}</p>
-                  </div>
-                  <div className="flex items-center space-x-4 text-gray-500">
-                    <span className="flex items-center">
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      {post.replies}
-                    </span>
-                    <span className="flex items-center">
-                      <ThumbsUp className="h-4 w-4 mr-1" />
-                      {post.likes}
-                    </span>
-                  </div>
-                </div>
+                <h4 className="text-lg font-semibold">{post.title}</h4>
+                <p className="text-sm text-gray-600">Posted by {post.author} • {new Date(post.timestamp.seconds * 1000).toLocaleString()}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <CallToAction
-        title="Ready to join the farming community?"
-        buttonText="Join the Conversation"
-        onClick={() => {}}
-      />
+      <CallToAction title="Join the Farming Community Today!" buttonText="Join Now" onClick={() => {}} />
 
-      {/* Modal for New Post */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h2 className="text-2xl mb-4">Create New Post</h2>
-            <form onSubmit={handleCreatePost}>
-              <input
-                type="text"
-                value={newPost.title}
-                onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                placeholder="Title"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              />
-              <textarea
-                value={newPost.content}
-                onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                placeholder="Content"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg mt-4"
-                rows={4}
-              />
-              <div className="flex justify-between mt-4">
-                <button type="button" className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Create Post</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal for Viewing a Post */}
+      {/* Modal for Viewing a Post and Replies */}
       {selectedPost && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
             <h2 className="text-2xl font-semibold">{selectedPost.title}</h2>
             <p className="text-gray-600">{selectedPost.content}</p>
-            <button onClick={handleClosePost} className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Close</button>
+
+            {/* Replies Section */}
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold">Replies</h3>
+              <div className="space-y-2 mt-2">
+                {replies[selectedPost.id]?.map(reply => (
+                  <div key={reply.id} className="p-2 border rounded-md">
+                    <p className="text-sm text-gray-700">{reply.content}</p>
+                    <p className="text-xs text-gray-500">By {reply.author} • {new Date(reply.timestamp.seconds * 1000).toLocaleString()}</p>
+                  </div>
+                ))}
+              </div>
+
+              <form onSubmit={handleReplySubmit} className="mt-4">
+                <textarea
+                  value={newReply}
+                  onChange={(e) => setNewReply(e.target.value)}
+                  placeholder="Write your reply..."
+                  className="w-full px-4 py-2 border rounded-lg"
+                  rows={2}
+                />
+                <button type="submit" className="mt-2 bg-green-600 text-white px-4 py-2 rounded-lg">Reply</button>
+              </form>
+            </div>
+
+            <button onClick={handleClosePost} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Close</button>
           </div>
         </div>
       )}
