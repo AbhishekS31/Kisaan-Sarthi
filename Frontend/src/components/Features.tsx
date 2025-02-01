@@ -40,7 +40,7 @@ const features = [
   },
   {
     icon: TrendingUp,
-    title: "Market Price Prediction",
+    title: "Market Price ",
     description: "Forecast & analyze farm market prices using AI",
     route: "/features/market-prediction",
   },
