@@ -34,7 +34,7 @@ const Hero = () => {
             whileTap={{ scale: 0.95 }}
             className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold flex items-center mx-auto hover:bg-green-700 transition-colors"
           >
-            Get Started
+           <a href="#features">Get Started</a> 
             <ArrowRight className="ml-2 h-5 w-5" />
           </motion.button>
         </motion.div>

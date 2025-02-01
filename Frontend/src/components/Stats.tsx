@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 const stats = [
-  { number: '10,000+', label: 'Farmers Assisted' },
+  { number: 'No', label: 'Farmers Assisted' },
   { number: '100+', label: 'Crops Analyzed' },
   { number: '90%', label: 'AI Model Accuracy' }
 ];
