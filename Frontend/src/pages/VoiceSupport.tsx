@@ -114,7 +114,12 @@ const AudioRecorder: React.FC = () => {
       } else {
         console.warn('Hindi voice not available, using default voice.');
       }
-     
+      const marathiVoice = voices.find(voice => voice.lang === 'mr-IN');
+      if (marathiVoice) {
+        utterance.voice = marathiVoice;
+      } else {
+        console.warn('Marathi voice not available, using default voice.');
+      }
       utterance.onend = () => setIsPlaying(false);
       speechSynthesisRef.current = utterance;
       window.speechSynthesis.speak(utterance);
