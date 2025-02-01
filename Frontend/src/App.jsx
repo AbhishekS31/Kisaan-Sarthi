@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "./components/Navbar";
@@ -21,6 +20,7 @@ import CommunityForum from "./pages/CommunityForum.tsx"
 import ChatbotIcon from './components/ChatBotIcon.jsx';
 import Chatbot from './components/ChatBot.jsx';
 import { useState } from "react";
+import Dashboard from "./pages/Dashboard.tsx";
 
 function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -61,6 +61,7 @@ function App() {
           <Route path='/sign-up' element={<SignUpPage />} />
           {/* Feature Routes */}
           <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard/>} />
             <Route path="/features" element={<Features />} />
             <Route path="/features/plant-disease" element={<PlantDisease />} />
             <Route path="/features/crop-planning" element={<CropPlanning />} />
