@@ -17,6 +17,7 @@ import FertilizerRecommendation from "./pages/FertilizerRecommendation";
 import SignInPage from "./components/SignIn";
 import SignUpPage from "./components/Signup";
 import ProtectedRoute from "./Protected";
+import CommunityForum from "./pages/CommunityForum.tsx"
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
         <Route path="/features/market-prediction" element={<MarketPrices />} />
         <Route path="/features/fertilizer-recommendation" element={<FertilizerRecommendation />} />
         <Route path="/features/voice-chat" element={<VoiceSupport />} />
+        <Route path="/features/community-forum" element={<CommunityForum/>} />
         </Route>
       </Routes>
     </Router>
