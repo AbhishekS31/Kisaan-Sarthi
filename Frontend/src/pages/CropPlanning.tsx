@@ -31,20 +31,125 @@ const soilTypes = [
   'Desert Soil',
 ];
 
+const maharashtraDistricts = [
+  'Ahmednagar',
+  'Akola',
+  'Amravati',
+  'Aurangabad',
+  'Beed',
+  'Bhandara',
+  'Buldhana',
+  'Chandrapur',
+  'Dhule',
+  'Gadchiroli',
+  'Gandhinagar',
+  'Hingoli',
+  'Jalgaon',
+  'Jalna',
+  'Kolhapur',
+  'Latur',
+  'Mumbai City',
+  'Mumbai Suburban',
+  'Nagpur',
+  'Nanded',
+  'Nandurbar',
+  'Nashik',
+  'Osmanabad',
+  'Palghar',
+  'Parbhani',
+  'Pune',
+  'Raigad',
+  'Ratnagiri',
+  'Sangli',
+  'Satara',
+  'Sindhudurg',
+  'Solapur',
+  'Thane',
+  'Wardha',
+  'Washim',
+  'Yavatmal',
+];
+
+
+
 const CropPlanning = () => {
+  const [farmLocation, setFarmLocation] = useState({
+    state: 'Maharashtra',
+    district: '',
+  });
   const [farmSize, setFarmSize] = useState('');
   const [soilType, setSoilType] = useState('');
+  const [previousCrops, setPreviousCrops] = useState('');
+  const [waterAvailability, setWaterAvailability] = useState('');
+  const [laborAvailability, setLaborAvailability] = useState('');
+  const [financialCondition, setFinancialCondition] = useState('');
+  const [cropPreferences, setCropPreferences] = useState('');
+  const [result , setResult] = useState({})
+  // const [additionalConsiderations, setAdditionalConsiderations] = useState({
+  //   climate: '',
+  //   marketAccess: '',
+  //   pestHistory: '',
+  // });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (farmSize && soilType) {
-      setIsAnalyzing(true);
-      setTimeout(() => {
+    
+    // Ensure all the fields are filled
+    if (
+      farmLocation.state &&
+      farmLocation.district &&
+      farmSize &&
+      soilType &&
+      previousCrops &&
+      waterAvailability &&
+      laborAvailability &&
+      financialCondition &&
+      cropPreferences
+    ) {
+      // Prepare the data object
+      const formData = {
+        farmLocation,
+        farmSize,
+        soilType,
+        previousCrops,
+        waterAvailability,
+        laborAvailability,
+        financialCondition,
+        cropPreferences,
+      };
+  
+      try {
+        
+        setIsAnalyzing(true)
+        const response = await fetch('your-backend-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData), // Send the formData object as a JSON string
+        });
+  
+        // Handle the response
+        if (response.ok) {
+          const data = await response.json();
+          setResult(data);
+          console.log('Data successfully sent to backend:', data);
+
+         
+        } else {
+          console.error('Error sending data to backend:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error occurred during the fetch request:', error);
+        // Handle fetch error
+      } finally {
+        // Reset the analyzing state
         setIsAnalyzing(false);
-      }, 2000);
+      }
     }
   };
+  
 
   return (
     <FeatureLayout
@@ -68,6 +173,48 @@ const CropPlanning = () => {
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Farm Location */}
+              <div>
+                <label
+                  htmlFor="farm-state"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  State
+                </label>
+                <input
+                  type="text"
+                  id="farm-state"
+                  value="Maharashtra"
+                  disabled
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="farm-district"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  District
+                </label>
+                <select
+                  id="farm-district"
+                  value={farmLocation.district}
+                  onChange={(e) =>
+                    setFarmLocation({ ...farmLocation, district: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select district</option>
+                  {maharashtraDistricts.map((district) => (
+                    <option key={district} value={district}>
+                      {district}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Farm Size */}
               <div>
                 <label
                   htmlFor="farm-size"
@@ -88,6 +235,7 @@ const CropPlanning = () => {
                 />
               </div>
 
+              {/* Soil Type */}
               <div>
                 <label
                   htmlFor="soil-type"
@@ -111,6 +259,109 @@ const CropPlanning = () => {
                 </select>
               </div>
 
+              {/* Previous Crops */}
+              <div>
+                <label
+                  htmlFor="previous-crops"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Previous Crops Grown
+                </label>
+                <textarea
+                  id="previous-crops"
+                  value={previousCrops}
+                  onChange={(e) => setPreviousCrops(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Enter previous crops grown"
+                  rows={3}
+                />
+              </div>
+
+              {/* Water Availability */}
+              <div>
+                <label
+                  htmlFor="water-availability"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Water Availability
+                </label>
+                <select
+                  id="water-availability"
+                  value={waterAvailability}
+                  onChange={(e) => setWaterAvailability(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select water availability</option>
+                  <option value="Rainfed">Rainfed</option>
+                  <option value="Irrigated">Irrigated</option>
+                  <option value="Mixed">Mixed</option>
+                </select>
+              </div>
+
+              {/* Labor Availability */}
+              <div>
+                <label
+                  htmlFor="labor-availability"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Labor Availability
+                </label>
+                <select
+                  id="labor-availability"
+                  value={laborAvailability}
+                  onChange={(e) => setLaborAvailability(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select labor availability</option>
+                  {['High', 'Medium', 'Low'].map((level) => (
+                    <option key={level} value={level}>
+                      {level}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Financial Condition */}
+              <div>
+                <label
+                  htmlFor="financial-condition"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Financial Condition
+                </label>
+                <input
+                  type="number"
+                  id="financial-condition"
+                  value={financialCondition}
+                  onChange={(e) => setFinancialCondition(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Enter available budget"
+                  min="0"
+                  required
+                />
+              </div>
+
+              {/* Crop Preferences */}
+              <div>
+                <label
+                  htmlFor="crop-preferences"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Crop Preferences
+                </label>
+                <textarea
+                  id="crop-preferences"
+                  value={cropPreferences}
+                  onChange={(e) => setCropPreferences(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Enter your crop preferences"
+                  rows={3}
+                />
+              </div>
+
+              {/* Submit Button */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -135,7 +386,7 @@ const CropPlanning = () => {
       <CallToAction
         title="Ready to optimize your farm's productivity?"
         buttonText="Generate Your Crop Plan"
-        onClick={() => {}}
+        onClick={() => { }}
       />
     </FeatureLayout>
   );
