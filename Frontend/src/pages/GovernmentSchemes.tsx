@@ -212,14 +212,11 @@ const GovernmentSchemes = () => {
                 <label htmlFor="ownership-status" className="block text-sm font-medium text-gray-700 mb-1">
                   Ownership Status
                 </label>
-                <input
-                  type="text"
-                  id="ownership-status"
-                  value={ownershipStatus}
-                  onChange={(e) => setOwnershipStatus(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  required
-                />
+                <select value={ownershipStatus} onChange={(e) => setOwnershipStatus(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg" required >
+                <option value="">Select ownership type</option>
+                {["owned" , "rented" , "leased" , "shared crops"].map((d) => (<option key={d} value={d}>{d}</option>))}
+
+              </select>
               </div>
 
               <div>
@@ -240,14 +237,40 @@ const GovernmentSchemes = () => {
                 <label htmlFor="financial-needs" className="block text-sm font-medium text-gray-700 mb-1">
                   Current Financial Needs
                 </label>
-                <input
-                  type="text"
-                  id="financial-needs"
-                  value={financialNeeds}
-                  onChange={(e) => setFinancialNeeds(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  required
-                />
+                <select value={financialNeeds} onChange={(e) => setFinancialNeeds(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg" required >
+                  <option value="" className="text-gray-600">Select for which thing you need help</option>
+                  {[
+                    "Need loan for seeds",
+                    "Need loan for fertilizers",
+                    "Need loan for pesticides",
+                    "Need financial assistance for irrigation",
+                    "Need guidance on organic farming",
+                    "Need subsidy for farm equipment",
+                    "Need help with soil testing",
+                    "Need access to better quality seeds",
+                    "Need weather updates for farming",
+                    "Need pest control solutions",
+                    "Need training on modern farming techniques",
+                    "Need government schemes information",
+                    "Need crop insurance support",
+                    "Need help with farm automation",
+                    "Need water supply solutions",
+                    "Need assistance in selling crops at better prices",
+                    "Need transportation support for produce",
+                    "Need access to cold storage facilities",
+                    "Need help with dairy farming",
+                    "Need advice on crop rotation and soil health",
+                    "Need solutions for reducing post-harvest losses",
+                    "Need access to farm labor",
+                    "Need farm security solutions",
+                    "Need help with greenhouse setup",
+                    "Need financial literacy for managing farm expenses",
+                    "Need assistance for livestock care",
+                    "Need better connectivity with agricultural experts",
+                    "Need access to sustainable farming resources"
+                  ].map((d) => (<option key={d} value={d}>{d}</option>))}
+
+                </select>
               </div>
             </div>
 

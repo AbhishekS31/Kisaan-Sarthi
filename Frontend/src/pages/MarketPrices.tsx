@@ -28,23 +28,52 @@ const crops = [
   'Pulses', 'Soybeans', 'Groundnut', 'Mustard', 'Potato'
 ];
 
-const regions = [
-  'North India', 'South India', 'East India', 'West India', 'Central India'
-];
+
 
 const MarketPrices = () => {
   const [crop, setCrop] = useState('');
-  const [region, setRegion] = useState('');
+  const [state, setState] = useState('');
+  const [district, setDistrict] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [result, setResult] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (crop && region) {
-      setIsAnalyzing(true);
-      setTimeout(() => {
-        setIsAnalyzing(false);
-      }, 2000);
+    setIsAnalyzing(true);
+    // API call to analyze market prices
+    try {
+      const response = await fetch('http://172.16.44.59:5000/get_marketplace', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          crop,
+          state,
+          district,
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      setResult(data)
+      setIsAnalyzing(false);
+
+    } catch (error) {
+      console.log(error)
     }
+  };
+
+
+  interface FormatTextProps {
+    text: string;
+  }
+  const formatText = ({ text }: FormatTextProps) => {
+    return text.split('\n').map((line, index) => (
+    <span key={index}>
+      {line}
+      <br />
+    </span>
+    ));
   };
 
   return (
@@ -93,25 +122,21 @@ const MarketPrices = () => {
 
               <div>
                 <label
-                  htmlFor="region"
+                  htmlFor="District"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  Region
+                  State
                 </label>
-                <select
-                  id="region"
-                  value={region}
-                  onChange={(e) => setRegion(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  required
+                <input type="text" value={state} onChange={(e) => setState(e.target.value)} className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent'/>
+              </div>
+              <div>
+                <label
+                  htmlFor="District"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  <option value="">Select region</option>
-                  {regions.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
+                  District
+                </label>
+                <input type="text" value={district} onChange={(e) => setDistrict(e.target.value)} className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent' />
               </div>
 
               <motion.button
@@ -127,26 +152,35 @@ const MarketPrices = () => {
                     Analyzing Market Data...
                   </div>
                 ) : (
-                  'Get Price Prediction'
+                  'Get Estimated Price '
                 )}
               </motion.button>
             </form>
 
             {/* Price Trend Preview */}
-            <div className="mt-8 p-6 bg-gray-50 rounded-lg">
+            {result ? (
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Estimated Prices : </h2>
+                <div className="result-container">
+                  <h1 className='text-lg font-bold '>₹ {result[0]}</h1>
+                  <p>{formatText({ text: result[1] })}</p>
+                </div>
+              </div>
+            ) : <div className="mt-8 p-6 bg-gray-50 rounded-lg">
               <div className="text-center text-gray-500">
                 <TrendingUp className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-                <p>Select a crop and region to see price predictions</p>
+                <p>Select a crop and region to see price </p>
               </div>
-            </div>
+            </div>}
+
           </motion.div>
         </div>
       </section>
 
       <CallToAction
         title="Ready to optimize your market timing?"
-        buttonText="Get Price Prediction"
-        onClick={() => {}}
+        buttonText="Get Price "
+        onClick={() => { }}
       />
     </FeatureLayout>
   );
