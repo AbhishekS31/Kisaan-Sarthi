@@ -17,7 +17,6 @@ import SignInPage from "./components/SignIn";
 import SignUpPage from "./components/Signup";
 import ProtectedRoute from "./Protected";
 import CommunityForum from "./pages/CommunityForum.tsx"
-import ChatbotIcon from './components/ChatBotIcon.jsx';
 import Chatbot from './components/ChatBot.jsx';
 import { useState } from "react";
 import Dashboard from "./pages/Dashboard.tsx";

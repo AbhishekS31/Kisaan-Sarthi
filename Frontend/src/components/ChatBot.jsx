@@ -6,7 +6,7 @@ const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     userName: "",
-    userEmail: "",
+    userPhoneNumber: "",
     question: "",
   });
 
@@ -24,17 +24,17 @@ const Chatbot = () => {
 
     const templateParams = {
       from_name: formData.userName,
-      from_email: formData.userEmail,
+      from_phoneNumber: formData.userPhoneNumber,
       to_name: "Recipient Name", // Replace with the recipient's name
       message: formData.question,
     };
 
     emailjs
       .send(
-        "your_service_id", // Replace with your EmailJS service ID
-        "your_template_id", // Replace with your EmailJS template ID
+        "service_00qri5c", // Replace with your EmailJS service ID
+        "template_5n5da2j", // Replace with your EmailJS template ID
         templateParams,
-        "your_user_id" // Replace with your EmailJS user ID
+        "CMMUZS96g4IVLFL0R" // Replace with your EmailJS user ID
       )
       .then(
         (response) => {
@@ -47,7 +47,7 @@ const Chatbot = () => {
 
     setFormData({
       userName: "",
-      userEmail: "",
+      userPhoneNumber: "",
       question: "",
     });
   };
@@ -57,7 +57,7 @@ const Chatbot = () => {
       {isOpen ? (
         <div className="bg-white rounded-lg shadow-2xl w-80 overflow-hidden transition-all duration-300 ease-in-out transform translate-y-0 opacity-100">
           <div className="bg-blue-600 text-white p-4 flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Chat with us</h3>
+            <h3 className="text-lg font-semibold">Your HelpLine </h3>
             <button
               onClick={handleToggle}
               className="text-white hover:text-gray-200 focus:outline-none"
@@ -83,21 +83,22 @@ const Chatbot = () => {
               placeholder="Enter your name"
             />
             <label
-              htmlFor="userEmail"
+              htmlFor="userPhoneNumber"
               className="block text-sm font-medium text-gray-700 mb-2 mt-4"
             >
-              Your Email
+              Your Phone Number
             </label>
             <input
-              type="email"
-              id="userEmail"
-              name="userEmail"
-              value={formData.userEmail}
+              type="number"
+              id="userPhoneNumber"
+              name="userPhoneNumber"
+              value={formData.userPhoneNumber}
               onChange={handleChange}
               className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
               placeholder="Enter your email"
             />
+            <p className="text-[12px] text-gray-600">You will receive a call on this number once we receive your concern</p>
             <label
               htmlFor="question"
               className="block text-sm font-medium text-gray-700 mb-2 mt-4"
