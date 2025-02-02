@@ -84,7 +84,7 @@ const AudioRecorder: React.FC = () => {
     const formData = new FormData()
     formData.append("audio", audioBlob, "recording.wav")
 
-    fetch("http://172.16.44.59:5000/upload_audio", {
+    fetch(`${import.meta.env.VITE_BASE_URL}/upload_audio`, {
       method: "POST",
       body: formData,
     })

@@ -89,7 +89,7 @@ const CropPlanning = () => {
 
         setIsAnalyzing(true)
         console.log(formData)
-        await fetch('http://172.16.44.59:5000/get_crop', {
+        await fetch(`${import.meta.env.VITE_BASE_URL}/get_crop`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -71,7 +71,7 @@ const GovernmentSchemes = () => {
     if (state && farmType) {
       setIsSearching(true)
       try {
-        const response = await fetch("http://172.16.44.59:5000/get_schemes", {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/get_schemes`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

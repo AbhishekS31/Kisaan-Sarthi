@@ -49,7 +49,7 @@ const PlantDisease = () => {
 
     try {
       setIsAnalyzing(true);
-      const response = await axios.post('http://172.16.44.59:5000/identify_disease', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/identify_disease`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

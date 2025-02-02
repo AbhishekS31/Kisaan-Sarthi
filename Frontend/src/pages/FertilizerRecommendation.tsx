@@ -77,7 +77,7 @@ const FertilizerRecommendation = () => {
       console.log('Sending data to backend:', requestData);
       // Replace with actual backend API
       try {
-        await fetch('http://172.16.44.59:5000/get_fertilizers', {
+        await fetch(`${import.meta.env.VITE_BASE_URL}/get_fertilizers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(requestData),

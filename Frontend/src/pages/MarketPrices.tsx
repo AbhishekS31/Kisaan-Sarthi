@@ -42,7 +42,7 @@ const MarketPrices = () => {
     setIsAnalyzing(true);
     // API call to analyze market prices
     try {
-      const response = await fetch('http://172.16.44.59:5000/get_marketplace', {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/get_marketplace`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
