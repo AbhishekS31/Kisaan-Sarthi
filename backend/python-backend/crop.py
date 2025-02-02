@@ -67,9 +67,10 @@ so we need to follow proper crop rotation.
 The values of N, P, K and pH are in percentage.
 The farm size is in acres.
 The budget is in INR
+Today's date is has been provided to you to decide the current season.
 also consider the crops grown in the district while suggesting the crop.
 Do not use pronouns to address yourself.
-do not use bullets, use numbering instead.z
+do not use bullets, use numbering instead.
 """
 
 

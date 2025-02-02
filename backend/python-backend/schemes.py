@@ -33,8 +33,8 @@ def take_input():
 
 
 
-class outptu_format(BaseModel):
-    schemes: list[str, str]
+class output_format(BaseModel):
+    schemes: list[str, str, str]
 
 
 def get_data(user_profile, system_message):
@@ -44,7 +44,7 @@ def get_data(user_profile, system_message):
             {"role": "system", "content": system_message},
             {"role": "user", "content": f"This is the user profile data {user_profile}"},
             ],
-            response_format=outptu_format,
+            response_format=output_format,
     )
     message = response.choices[0].message
 
@@ -65,13 +65,13 @@ system_message = """
 Your job is to help indian farmers with governemt schemes based on the user information provided.
 the output has to be in the following format
     schemes: list[str, str]
-    where the first element is the scheme name and the second element is the scheme description.
+    where the first element is the scheme name and the second element is the scheme description and the  third element is the scheme link.
 """
 
 def get_schemes(user_profile):
     result = get_data(user_profile, system_message)
     result = clean(result)
-    result = [result[i:i+2] for i in range(0, len(result), 2)]
+    result = [result[i:i+3] for i in range(0, len(result), 3)]
     return result
 
 
