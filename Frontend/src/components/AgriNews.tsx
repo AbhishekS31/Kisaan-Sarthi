@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Newspaper, ExternalLink } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { motion } from 'framer-motion';
