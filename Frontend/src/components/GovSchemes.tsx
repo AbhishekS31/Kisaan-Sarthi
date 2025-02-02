@@ -1,4 +1,3 @@
-import React from 'react';
 import { GanttChartSquare, ArrowRight } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { motion } from 'framer-motion';
@@ -9,21 +8,26 @@ const schemes = [
     name: "PM-KISAN",
     description: "Direct income support of ₹6000 per year",
     deadline: "2024-04-30",
-    status: "Active"
+    status: "Active" , 
+    link : "https://pmkisan.gov.in/"
+
   },
   {
     id: 2,
     name: "Soil Health Card",
     description: "Free soil testing and recommendations",
     deadline: "2024-03-31",
-    status: "Ending Soon"
+    status: "Ending Soon" , 
+    link : "https://www.soilhealth.dac.gov.in/home"
   },
   {
     id: 3,
     name: "Crop Insurance",
     description: "Premium subsidy for crop protection",
     deadline: "2024-05-15",
-    status: "Active"
+    status: "Active" , 
+    link : "https://www.pmfby.gov.in/"
+
   }
 ];
 
@@ -58,6 +62,7 @@ const GovSchemes = () => {
               <motion.button
                 whileHover={{ x: 5 }}
                 className="text-green-600 hover:text-green-700"
+                onClick={() => window.open(scheme.link, '_blank', 'noopener,noreferrer')}
               >
                 <ArrowRight size={20} />
               </motion.button>
