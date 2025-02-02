@@ -213,10 +213,10 @@ const GovernmentSchemes = () => {
                   Ownership Status
                 </label>
                 <select value={ownershipStatus} onChange={(e) => setOwnershipStatus(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg" required >
-                <option value="">Select ownership type</option>
-                {["owned" , "rented" , "leased" , "shared crops"].map((d) => (<option key={d} value={d}>{d}</option>))}
+                  <option value="">Select ownership type</option>
+                  {["owned", "rented", "leased", "shared crops"].map((d) => (<option key={d} value={d}>{d}</option>))}
 
-              </select>
+                </select>
               </div>
 
               <div>
@@ -328,6 +328,12 @@ const GovernmentSchemes = () => {
                   >
                     <h4 className="text-xl font-semibold mb-2 text-green-700">{scheme[0]}</h4>
                     <p className="text-gray-600">{scheme[1]}</p>
+                    <button
+                      onClick={() => window.open(scheme[2], '_blank', 'noopener,noreferrer')}
+                      className="mt-4 inline-block bg-green-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    >
+                      Apply Now
+                    </button>
                   </motion.div>
                 ))}
               </div>

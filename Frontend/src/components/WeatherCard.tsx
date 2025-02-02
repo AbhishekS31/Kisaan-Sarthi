@@ -1,17 +1,51 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Cloud, Sun, Droplets, Wind } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const weatherData = [
-  { day: 'Mon', temp: 28, humidity: 65 },
-  { day: 'Tue', temp: 30, humidity: 62 },
-  { day: 'Wed', temp: 29, humidity: 70 },
-  { day: 'Thu', temp: 27, humidity: 75 },
-  { day: 'Fri', temp: 26, humidity: 68 },
-];
 
 const WeatherCard = () => {
+  const [weatherData, setWeatherData] = useState([]);
+  const [currentWeather, setCurrentWeather] = useState({
+    temp_c: 0,
+    humidity: 0,
+    wind_kph: 0,
+    cloud: 0,
+  });
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const response = await axios.get('https://api.weatherapi.com/v1/forecast.json', {
+          params: {
+            key: 'a6df87d5cd2b417dbb493914250102', // Replace with your actual API key
+            q: 'Surat', // Replace with desired location
+            days: 5,
+          },
+        });
+
+        const forecastData = response.data.forecast.forecastday.map((day: any) => ({
+          day: new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' }),
+          temp: day.day.avgtemp_c,
+          humidity: day.day.avghumidity,
+        }));
+
+        setWeatherData(forecastData);
+        setCurrentWeather({
+          temp_c: response.data.current.temp_c,
+          humidity: response.data.current.humidity,
+          wind_kph: response.data.current.wind_kph,
+          cloud: response.data.current.cloud,
+        });
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
   return (
     <DashboardCard title="Weather Forecast" className="col-span-2">
       <div className="grid grid-cols-4 gap-4 mb-6">
@@ -19,28 +53,28 @@ const WeatherCard = () => {
           <Sun className="text-yellow-500" />
           <div>
             <p className="text-sm text-gray-600">Temperature</p>
-            <p className="font-semibold">28°C</p>
+            <p className="font-semibold">{currentWeather.temp_c}°C</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Droplets className="text-blue-500" />
           <div>
             <p className="text-sm text-gray-600">Humidity</p>
-            <p className="font-semibold">65%</p>
+            <p className="font-semibold">{currentWeather.humidity}%</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Wind className="text-gray-500" />
           <div>
             <p className="text-sm text-gray-600">Wind Speed</p>
-            <p className="font-semibold">12 km/h</p>
+            <p className="font-semibold">{currentWeather.wind_kph} km/h</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Cloud className="text-gray-400" />
           <div>
             <p className="text-sm text-gray-600">Cloud Cover</p>
-            <p className="font-semibold">20%</p>
+            <p className="font-semibold">{currentWeather.cloud}%</p>
           </div>
         </div>
       </div>
