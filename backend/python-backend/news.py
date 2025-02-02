@@ -3,13 +3,14 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
+number_of_articles = 8
 def scrape_krishi_jagran():
     url = "https://krishijagran.com"
     response = requests.get(url, verify=False)
     soup = BeautifulSoup(response.content, 'html.parser')
     
     # Find all elements with class 'pst'
-    pst_elements = soup.find_all('div', class_='pst')[:3]  # Get only top 3
+    pst_elements = soup.find_all('div', class_='pst')[:number_of_articles]  # Get only top 3
     
     articles = []
     for pst in pst_elements:
@@ -69,4 +70,3 @@ def news():
 
 if __name__ == '__main__':
     news()
-    
