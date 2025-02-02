@@ -4,8 +4,12 @@ import json
 from VoiceChat import VoiceChat
 from flask_cors import CORS
 import schemes
-from disease import predict_disease
+# from disease import predict_disease
 import disea
+from fertilizers import fertilizer_recommendation
+from crop import crop_recommendation
+
+
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +23,35 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/')
 def index():
     return "Hello, World!"
+
+@app.route('/get_crop', methods=['POST'])
+def get_crop():
+    # Ensure you are receiving JSON
+    if request.is_json:
+        data = request.get_json()  # Get JSON data
+        # You can process the data here if needed
+        print(data)  # For debugging or handling
+        result = crop_recommendation(data)
+        print(result)  # For debugging or handling
+        return jsonify(result)
+        # return jsonify({"status": "success", "data_received": data}), 200
+    else:
+        return jsonify({"status": "error", "message": "Invalid JSON"}), 400
+
+
+@app.route('/get_fertilizers', methods=['POST'])
+def get_fertilizers():
+    # Ensure you are receiving JSON
+    if request.is_json:
+        data = request.get_json()  # Get JSON data
+        # You can process the data here if needed
+        print(data)  # For debugging or handling
+        result = fertilizer_recommendation(data)
+        print(result)  # For debugging or handling
+        return jsonify(result)
+        # return jsonify({"status": "success", "data_received": data}), 200
+    else:
+        return jsonify({"status": "error", "message": "Invalid JSON"}), 400
 
 
 
