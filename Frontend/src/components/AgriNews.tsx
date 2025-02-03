@@ -19,7 +19,7 @@ const AgriNews = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('http://172.16.44.59:5000/api/news', {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/news`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
