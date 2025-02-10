@@ -81,7 +81,7 @@ def predict_disease(image_path):
 
 if __name__ == "__main__":
     # image_path = input("Enter the path to the image: ")
-    image_path = "test.jpg"
+    image_path = "test.jpeg"
 
 
     result = predict_disease(image_path)
