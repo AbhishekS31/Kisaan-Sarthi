@@ -46,7 +46,6 @@ def get_data(image_path):
                 "content": [
                     {
                         "type": "text",
-                        # "text": "This is maggie noodles, I am gonna eat all of this",
                         "text": f"This is the leaf from the plant",
                     },
                     {
