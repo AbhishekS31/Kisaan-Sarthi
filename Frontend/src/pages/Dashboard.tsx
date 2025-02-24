@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Leaf } from 'lucide-react';
 import FarmOverview from '../components/FarmOverview';
@@ -7,8 +6,10 @@ import DiseaseDetection from '../components/PersonalizedCropManagement';
 import VoiceAssistant from '../components/VoiceAssistant';
 import GovSchemes from '../components/GovSchemes';
 import AgriNews from '../components/AgriNews';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">
@@ -21,7 +22,10 @@ const Dashboard = () => {
               >
                 <Leaf className="h-8 w-8 text-green-500" />
               </motion.div>
-              <span className="ml-2 text-xl font-semibold text-gray-800">KisaanSarthi</span>
+              <span 
+              className="ml-2 text-xl font-semibold text-gray-800 cursor-pointer"
+              onClick={()=>navigate("/")}
+              >KisaanSarthi</span>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-500">Welcome, Farmer Siddesh</span>
