@@ -84,6 +84,6 @@ if __name__ == "__main__":
       "state": "Maharashtra",
     }
 
-    marketplace(data)
+    print(marketplace(data))
 
 

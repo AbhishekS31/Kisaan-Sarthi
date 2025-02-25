@@ -46,7 +46,6 @@ def get_data(image_path):
                 "content": [
                     {
                         "type": "text",
-                        # "text": "This is maggie noodles, I am gonna eat all of this",
                         "text": f"This is the leaf from the plant",
                     },
                     {
@@ -81,7 +80,7 @@ def predict_disease(image_path):
 
 if __name__ == "__main__":
     # image_path = input("Enter the path to the image: ")
-    image_path = "test.jpg"
+    image_path = "test.jpeg"
 
 
     result = predict_disease(image_path)

@@ -98,5 +98,5 @@ if __name__ == "__main__":
       "rainfall": "moderate",
     }
 
-    fertilizer_recommendation(data)
+    print(fertilizer_recommendation(data))
 
