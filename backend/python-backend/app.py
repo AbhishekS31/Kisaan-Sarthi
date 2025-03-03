@@ -22,23 +22,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return "The Backend is working"
 
-
-# @app.route('/get_news', methods=['POST'])
-# def get_news():
-#     # Ensure you are receiving JSON
-#     print("received news request")
-#     if request.is_json:
-#         data = request.get_json()  # Get JSON data
-#         # You can process the data here if needed
-#         # print(data)  # For debugging or handling
-#         result = news()
-#         print(result)  # For debugging or handling
-#         return jsonify(result)
-#         # return jsonify({"status": "success", "data_received": data}), 200
-#     else:
-#         return jsonify({"status": "error", "message": "Invalid JSON"}), 400
 
 @app.route('/api/news', methods=['GET'])
 def get_news():
@@ -175,4 +160,5 @@ def upload_audio():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)
+    # app.run(host="0.0.0.0", port=5000, debug=True)
